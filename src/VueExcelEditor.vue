@@ -279,7 +279,7 @@ import PanelFilter from './PanelFilter.vue'
 import PanelSetting from './PanelSetting.vue'
 import PanelFind from './PanelFind.vue'
 import DatePicker from 'vue2-datepicker'
-import XLSX from 'xlsx'
+import XLSX from 'xlsx-js-style'
 
 import 'vue2-datepicker/index.css'
 
@@ -467,7 +467,9 @@ export default {
       summaryRow: false,
       summary: {},
       showFilteredOnly: true,
-      showSelectedOnly: false
+      showSelectedOnly: false,
+
+      colorsBackground: {},
     }
     return dataset
   },
@@ -1932,7 +1934,7 @@ export default {
         fileReader.readAsBinaryString(file)
       }, 500)      
     },
-    exportTable (format, selectedOnly, filename) {
+    exportTable (format, selectedOnly, filename, is_colored = false, keyname = null) {
       this.processing = true
       setTimeout(() => {
         const wb = XLSX.utils.book_new()
@@ -1955,6 +1957,26 @@ export default {
             width: t.getBoundingClientRect().width / 6.5
           }
         })
+        let coloredObjectRow = is_colored ? {} : undefined;
+        if (is_colored && keyname !== null) {
+          mapped.forEach((element, index) => {
+            coloredObjectRow[element[keyname]] = index + 1;
+          })
+          mapped.forEach(element => {
+            this.colorsBackground[element[keyname]].forEach(background => {
+              if (background.color !== undefined) {
+                ws1[XLSX.utils.encode_cell({ r: coloredObjectRow[element[keyname]], c: background.c })].s = {
+                  fill: {
+                    patternType: "solid",
+                    fgColor: {
+                      rgb: (background.color.substring(1))
+                    }
+                  }
+                };
+              }
+            })
+          })
+        }
         XLSX.utils.book_append_sheet(wb, ws1, 'Sheet1')
         filename = filename || 'export'
         switch (format) {
