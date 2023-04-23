@@ -470,6 +470,7 @@ export default {
       showSelectedOnly: false,
 
       colorsBackground: {},
+      colorsOtherFieldsTotal: {},
     }
     return dataset
   },
@@ -1976,6 +1977,34 @@ export default {
               }
             })
           })
+
+          let rowTotalShow = mapped.length + 5; let colTotalShow = 5;
+          for (const colorsKeyTotalFields in this.colorsOtherFieldsTotal) {
+            let colorsOtherFieldTotal = this.colorsOtherFieldsTotal[colorsKeyTotalFields];
+            XLSX.utils.sheet_add_aoa(ws1, [[{
+              s: {
+                font: {
+                  color: {
+                    rgb: (colorsOtherFieldTotal.projectColor.substring(1))
+                  }
+                }
+              },
+              v: `Total ore proiect ${colorsOtherFieldTotal.projectName}: ${colorsOtherFieldTotal.value}`
+            }]], {origin: XLSX.utils.encode_cell({ r: rowTotalShow, c: colTotalShow })});
+            rowTotalShow++;
+            XLSX.utils.sheet_add_aoa(ws1, [[{
+              s: {
+                font: {
+                  bold: true,
+                  color: {
+                    rgb: (colorsOtherFieldTotal.projectColor.substring(1))
+                  }
+                }
+              },
+              v: `${colorsOtherFieldTotal.value}`
+            }]], {origin: XLSX.utils.encode_cell({ r: rowTotalShow, c: colTotalShow })});
+            rowTotalShow++;
+          }
         }
         XLSX.utils.book_append_sheet(wb, ws1, 'Sheet1')
         filename = filename || 'export'
