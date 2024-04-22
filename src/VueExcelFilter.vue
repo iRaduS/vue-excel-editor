@@ -75,8 +75,10 @@ export default {
   methods: {
     updateValue (e) {
       const content = e.target.textContent
-      if (this.value !== content)
-        this.$emit('input', content)
+      if (this.value !== content) {
+          this.$emit('input', content)
+          console.log(content)
+      }
     },
     onInput (e) {
       if (this.interactive)

@@ -876,6 +876,7 @@ export default {
         this.reviseSelectedAfterTableChange()
       }
       this.calSummary()
+      this.$emit('update-stats', this.table)
     },
     calStickyLeft () {
       let left = 0, n = 0
@@ -993,6 +994,7 @@ export default {
       const ref = this.$refs[`filter-${name}`][0]
       ref.$el.textContent = filterText
       ref.$emit('input', filterText)
+      console.log(this.table)
     },
     
     clearFilter(name) {
